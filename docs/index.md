@@ -6,7 +6,7 @@ hero:
   text: "Scalable Physics-Informed DExterous Retargeting"
   tagline: A general framework for physics-based retargeting from human to diverse robot embodiments
   image:
-    src: /teaser.png
+    src: /figs/teaser.png
     alt: SPIDER
   actions:
     - theme: brand
