@@ -33,6 +33,12 @@ def load_data(
     raw_data = np.load(data_path)
     qpos_ref = raw_data["qpos"]
     qvel_ref = raw_data["qvel"]
+    # if contact_rew_scale > 0.0, we need to make sure both contact and contact_pos are provided.
+    if config.contact_rew_scale > 0.0:
+        if "contact" not in raw_data:
+            raise ValueError("contact data not found while contact_rew_scale > 0.0")
+        if "contact_pos" not in raw_data:
+            raise ValueError("contact_pos data not found while contact_rew_scale > 0.0")
     try:
         contact = raw_data["contact"]
     except:

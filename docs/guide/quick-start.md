@@ -21,7 +21,7 @@ This will:
 3. Display real-time visualization in MuJoCo viewer
 4. Save optimized trajectory and video
 
-## Full Workflow Example
+## Full Workflow Example For Dexterous Hand
 
 To process a task from scratch, follow these steps:
 
@@ -40,7 +40,7 @@ export DATASET_NAME=gigahand
 Convert raw human motion data to standardized format:
 
 ```bash
-uv run spider/process_datasets/oakink.py \
+uv run spider/process_datasets/${DATASET_NAME}.py \
   --task=${TASK} \
   --embodiment-type=${HAND_TYPE} \
   --data-id=${DATA_ID}
@@ -103,7 +103,52 @@ Optimize trajectory with physics constraints:
 
 ```bash
 uv run examples/run_mjwp.py \
-  +override=${DATASET_NAME} \
+  task=${TASK} \
+  dataset_name=${DATASET_NAME} \
+  data_id=${DATA_ID} \
+  robot_type=${ROBOT_TYPE} \
+  embodiment_type=${HAND_TYPE}
+```
+
+## Full Workflow Example For Humanoid Robot
+
+Set environment variables:
+
+```bash
+export TASK=dance
+export HAND_TYPE=humanoid
+export DATA_ID=0
+export ROBOT_TYPE=unitree_g1
+export DATASET_NAME=lafan
+```
+
+### Run IK
+
+```bash
+# with GMR (remember to generate GMR data trajectoru_gmr.pkl first with their official code. )
+uv run spider/process_datasets/gmr.py \
+  --task=${TASK} \
+  --dataset-name=${DATASET_NAME} \
+  --data-id=${DATA_ID} \
+  --robot-type=${ROBOT_TYPE} \
+  --embodiment-type=${HAND_TYPE} \
+  --contact-detection-mode=one
+
+# with locomujoco
+uv run spider/process_datasets/locomujoco.py \
+  --task=${TASK} \
+  --dataset-name=${DATASET_NAME} \
+  --data-id=${DATA_ID} \
+  --robot-type=${ROBOT_TYPE} \
+  --embodiment-type=${HAND_TYPE}
+```
+
+### Run Physics-Based Retargeting
+
+```bash
+uv run examples/run_mjwp.py \
+  +override=humanoid \
+  dataset_name=${DATASET_NAME} \
   task=${TASK} \
   data_id=${DATA_ID} \
   robot_type=${ROBOT_TYPE} \

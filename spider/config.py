@@ -97,6 +97,7 @@ class Config:
     rot_rew_scale: float = 0.1
     vel_rew_scale: float = 0.0001
     terminal_rew_scale: float = 1.0
+    contact_rew_scale: float = 0.0
 
     # === VISUALIZATION CONFIGURATION ===
     show_viewer: bool = True
@@ -260,5 +261,17 @@ def process_config(config: Config):
     if "ref_dt" in task_info:
         config.ref_dt = task_info["ref_dt"]
         loguru.logger.info(f"overriding ref_dt: {config.ref_dt} from task_info.json")
+
+    # override contact site ids
+    if config.contact_rew_scale > 0.0:
+        if "contact_site_ids" in task_info:
+            config.contact_site_ids = task_info["contact_site_ids"]
+            loguru.logger.info(
+                f"overriding contact_site_ids: {config.contact_site_ids} from task_info.json"
+            )
+        else:
+            raise ValueError(
+                "contact_site_ids not found in task_info.json while contact_rew_scale > 0.0"
+            )
 
     return config

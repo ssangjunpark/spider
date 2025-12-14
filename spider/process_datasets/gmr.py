@@ -57,7 +57,28 @@ def main(
     enable_rate_limiter: bool = False,
     start_frame: int = 0,
     end_frame: int = -1,
+    contact_detection_mode: str = "one",
 ):
+    """
+    Process GMR data to create a SPIDER dataset.
+    Args:
+        dataset_dir: The directory containing the GMR data.
+        dataset_name: The name of the dataset.
+        robot_type: The type of robot.
+        embodiment_type: The type of embodiment.
+        task: The task to perform.
+        data_id: The id of the data.
+        show_viewer: Whether to show the viewer.
+        save_video: Whether to save the video.
+        overwrite: Whether to overwrite the existing data.
+        enable_rate_limiter: Whether to enable the rate limiter.
+        start_frame: The start frame of the data.
+        end_frame: The end frame of the data.
+        contact_detection_mode: The mode of contact detection.
+            "auto": Automatically detect contact based on mujoco contact detection.
+            "zero": Always disable contact.
+            "one": Always enable contact.
+    """
     dataset_dir = os.path.abspath(dataset_dir)
     processed_dir = get_processed_data_dir(
         dataset_dir=dataset_dir,
@@ -100,17 +121,26 @@ def main(
     shutil.copy(src_scene_file, tgt_scene_file)
     print(f"copy from {src_scene_file} to {tgt_scene_file}")
 
-    # create task info file
-    task_info_file = f"{scene_dir}/task_info.json"
-    with open(task_info_file, "w") as f:
-        json.dump({"ref_dt": 1.0 / fps}, f, indent=2)
-    print(f"Saved task info to {task_info_file}")
-
     # run mujoco
     mj_model = mujoco.MjModel.from_xml_path(tgt_scene_file)
     mj_data = mujoco.MjData(mj_model)
     run_viewer = get_viewer(show_viewer, mj_model, mj_data)
     rate_limiter = RateLimiter(fps)
+
+    # contact site id
+    contact_site_ids = []
+    for i in range(mj_model.nsite):
+        site_name = mujoco.mj_id2name(mj_model, mujoco.mjtObj.mjOBJ_SITE, i)
+        if site_name and "contact" in site_name:
+            contact_site_ids.append(i)
+    assert len(contact_site_ids) > 0 and contact_detection_mode != "zero", "No contact site found while you enable contact detection"
+
+    # create task info file
+    task_info_file = f"{scene_dir}/task_info.json"
+    with open(task_info_file, "w") as f:
+        json.dump({"ref_dt": 1.0 / fps, "contact_site_ids": contact_site_ids}, f, indent=2)
+    print(f"Saved task info to {task_info_file}")
+
     # log info
     info_list = []
     # log video
@@ -129,17 +159,27 @@ def main(
                 )
             else:
                 mj_data.qvel[:] = 0.0
-            # compute contact (currently it is a placeholder, will be implemented later)
-            contact = np.zeros(1)
+
             # compute ctrl
             mj_data.ctrl[:] = qpos[i][7:]
             mujoco.mj_forward(mj_model, mj_data)
+
+            # compute contact
+            contact_pos = mj_data.site_xpos[contact_site_ids, :]
+            if contact_detection_mode == "one":
+                contact = np.ones(len(contact_site_ids))
+            elif contact_detection_mode == "zero":
+                contact = np.zeros(len(contact_site_ids))
+            else:
+                contact = contact_pos[:, 2] < 0.001
+
             # log
             info = {
                 "qpos": mj_data.qpos.copy(),
                 "qvel": mj_data.qvel.copy(),
                 "ctrl": mj_data.ctrl.copy(),
                 "contact": contact,
+                "contact_pos": contact_pos.copy(),
             }
             info_list.append(info)
             # render

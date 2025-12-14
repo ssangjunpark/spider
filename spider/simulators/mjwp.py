@@ -270,9 +270,10 @@ def get_reward(
 
     TODO: move reward computation to task-specific module
     """
-    qpos_ref, qvel_ref, ctrl_ref, contact_ref, _contact_pos_ref = ref
+    qpos_ref, qvel_ref, ctrl_ref, contact_ref, contact_pos_ref = ref
     qpos_sim = wp.to_torch(env.data_wp.qpos)
     qvel_sim = wp.to_torch(env.data_wp.qvel)
+
     # weighted qpos tracking
     qpos_diff = _diff_qpos(
         config, qpos_sim, qpos_ref.unsqueeze(0).repeat(qpos_sim.shape[0], 1)
@@ -284,7 +285,18 @@ def get_reward(
 
     qpos_rew = -qpos_dist * 1.0
     qvel_rew = -config.vel_rew_scale * qvel_dist * 1.0
-    reward = qpos_rew + qvel_rew
+
+    # contact reward
+    if config.contact_rew_scale > 0.0 and len(config.contact_site_ids) > 0:
+        site_xpos_torch = wp.to_torch(env.data_wp.site_xpos)
+        contact_pos = site_xpos_torch[:, config.contact_site_ids]
+        contact_dist = torch.norm(contact_pos - contact_pos_ref, p=2, dim=-1)
+        contact_dist_masked = contact_dist * contact_ref.unsqueeze(0)
+        contact_rew = -contact_dist_masked.sum(dim=1)
+    else:
+        contact_rew = 0.0
+
+    reward = qpos_rew + qvel_rew + contact_rew
 
     info = {
         "qpos_dist": qpos_dist,
