@@ -69,9 +69,9 @@ def _compile_step(
         mjwarp.step(model_wp, data_wp)
 
     # Warmup/compile
-    _step_once()
-    _step_once()
-    wp.synchronize()
+    # _step_once()
+    # _step_once()
+    # wp.synchronize()
     # Capture
     with wp.ScopedCapture() as capture:
         _step_once()
