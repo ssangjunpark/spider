@@ -79,6 +79,15 @@ uv run spider/preprocess/decompose_fast.py \
   --embodiment-type=${HAND_TYPE}
 ```
 
+If you want higher quality convex decomposition, you can use the following command:
+```bash
+uv run spider/preprocess/decompose.py \
+  --task=${TASK} \
+  --dataset-name=${DATASET_NAME} \
+  --data-id=${DATA_ID} \
+  --embodiment-type=${HAND_TYPE}
+```
+
 **What it does:**
 - Loads object mesh from dataset
 - Performs convex decomposition using V-HACD or CoACD

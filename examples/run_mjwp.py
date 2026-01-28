@@ -15,6 +15,8 @@ Date: 2025-08-11
 from __future__ import annotations
 
 import time
+from dataclasses import fields
+from pathlib import Path
 
 import hydra
 import imageio
@@ -22,7 +24,7 @@ import loguru
 import mujoco
 import numpy as np
 import torch
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
 from spider.config import Config, process_config
 from spider.interp import get_slice
@@ -57,6 +59,37 @@ from spider.viewers import (
     update_viewer,
 )
 
+_CONFIG_SKIP_FIELDS = {
+    "noise_scale",
+    "env_params_list",
+    "viewer_body_entity_and_ids",
+}
+
+
+def _normalize_yaml_value(value):
+    if isinstance(value, torch.Tensor):
+        return value.detach().cpu().tolist()
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, np.generic):
+        return value.item()
+    if isinstance(value, tuple):
+        return list(value)
+    return value
+
+
+def _save_config_yaml(config: Config) -> None:
+    if not config.save_config:
+        return
+    config_dict = {}
+    for field in fields(config):
+        if field.name in _CONFIG_SKIP_FIELDS:
+            continue
+        config_dict[field.name] = _normalize_yaml_value(getattr(config, field.name))
+    output_path = Path(config.output_dir) / "config.yaml"
+    OmegaConf.save(config=OmegaConf.create(config_dict), f=str(output_path))
+    loguru.logger.info(f"Saved config to {output_path}")
+
 
 def main(config: Config):
     """Run the SPIDER using MuJoCo Warp backend"""
@@ -67,6 +100,12 @@ def main(config: Config):
     qpos_ref, qvel_ref, ctrl_ref, contact, contact_pos = load_data(
         config, config.data_path
     )
+    # hack: start from step 500
+    # qpos_ref = qpos_ref[500:]
+    # qvel_ref = qvel_ref[500:]
+    # ctrl_ref = ctrl_ref[500:]
+    # contact = contact[500:]
+    # contact_pos = contact_pos[500:]
     ref_data = (qpos_ref, qvel_ref, ctrl_ref, contact, contact_pos)
     config.max_sim_steps = (
         config.max_sim_steps
@@ -119,6 +158,7 @@ def main(config: Config):
             )
         env_params_list.append(env_params)
     config.env_params_list = env_params_list
+    _save_config_yaml(config)
 
     # setup viewer and renderer
     run_viewer = setup_viewer(config, mj_model, mj_data)
@@ -224,7 +264,7 @@ def main(config: Config):
             # rule out "trace"
             info_list.append({k: v for k, v in infos.items() if k != "trace_sample"})
 
-            if sim_step >= config.max_sim_steps - 1:
+            if sim_step >= config.max_sim_steps:
                 break
 
         t_end = time.perf_counter()

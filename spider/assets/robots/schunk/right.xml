@@ -7,7 +7,7 @@
     <!-- with this setting, the response time is around 1s -->
     <position kp="300" dampratio="1.0" inheritrange="1" />
     <joint damping="0.0" armature="1.0" frictionloss="0.0" />
-    <site size="0.01" type="sphere" rgba="1 0 0 1" group="3" />
+    <site size="0.005" type="sphere" rgba="1 0 0 1" group="3" />
   </default>
 
   <asset>
@@ -79,7 +79,7 @@
                       diaginertia="0.01796 0.016832 0.00408805" />
                     <joint name="right_hand_Thumb_Flexion" pos="0 0 0" axis="0 0 1" range="0 0.9704" />
                     <geom type="mesh" mesh="right_d11" />
-                    <geom name="collision_hand_right_thumb_2" type="capsule" size="0.01"
+                    <geom name="collision_hand_right_thumb_2" type="capsule" size="0.016"
                       fromto="0 0 0 0.055 0 0" rgba="0 1 0 1" group="3" />
                     <body name="right_hand_b" pos="0.0485 0 0">
                       <inertial pos="0.123157 -0.008382 -2.7e-05"
@@ -87,18 +87,18 @@
                         diaginertia="0.00139495 0.00103 0.000885049" />
                       <joint name="right_hand_j3" pos="0 0 0" axis="0 0 1" range="0 0.98506" />
                       <geom type="mesh" mesh="right_d12" />
-                      <geom name="collision_hand_right_thumb_1" type="capsule" size="0.008"
+                      <geom name="collision_hand_right_thumb_1" type="capsule" size="0.012"
                         fromto="0 0 0 0.03 0 0" rgba="0 1 0 1" group="3" />
                       <body name="right_hand_c" pos="0.03 0 0">
                         <inertial pos="0.007 0 0" quat="0.5 0.5 0.5 0.5" mass="0.02"
                           diaginertia="2e-05 2e-05 1e-05" />
                         <joint name="right_hand_j4" pos="0 0 0" axis="0 0 1" range="0 1.406" />
                         <geom type="mesh" mesh="right_d13" />
-                        <geom name="collision_hand_right_thumb_0" type="capsule" size="0.008"
+                        <geom name="collision_hand_right_thumb_0" type="capsule" size="0.012"
                           fromto="0 0 0 0.02 0 0" rgba="0 1 0 1" group="3" />
-                        <site name="right_thumb_tip" pos="0.02 0 0" />
-                        <site name="trace_hand_right_thumb_tip" pos="0.02 0 0" />
-                        <site name="track_hand_right_thumb_tip" pos="0.02 0 0" />
+                        <site name="right_thumb_tip" pos="0.02 0.01 0" />
+                        <site name="trace_hand_right_thumb_tip" pos="0.02 0.01 0" />
+                        <site name="track_hand_right_thumb_tip" pos="0.02 0.01 0" />
                       </body>
                     </body>
                   </body>
@@ -138,11 +138,11 @@
                             diaginertia="2e-05 2e-05 1e-05" />
                           <joint name="right_hand_j16" pos="0 0 0" axis="0 0 1" range="0 1.395" />
                           <geom type="mesh" mesh="right_finger_tip" />
-                          <geom name="collision_hand_right_ring_0" type="sphere" size="0.01"
-                            rgba="0 1 0 1" group="3" pos="0.01 0 0.00" />
-                          <site name="right_ring_tip" pos="0.01 0 0.00" />
-                          <site name="trace_hand_right_ring_tip" pos="0.01 0 0.00" />
-                          <site name="track_hand_right_ring_tip" pos="0.01 0 0.00" />
+                          <geom name="collision_hand_right_ring_0" type="capsule" size="0.008"
+                            rgba="0 1 0 1" group="3" fromto="0 0 0 0.015 0 0.00" />
+                          <site name="right_ring_tip" pos="0.01 0.007 0.00" />
+                          <site name="trace_hand_right_ring_tip" pos="0.01 0.007 0.00" />
+                          <site name="track_hand_right_ring_tip" pos="0.01 0.007 0.00" />
                         </body>
                       </body>
                     </body>
@@ -174,11 +174,11 @@
                             diaginertia="2e-05 2e-05 1e-05" />
                           <joint name="right_hand_j17" pos="0 0 0" axis="0 0 1" range="0 1.3971" />
                           <geom type="mesh" mesh="right_finger_tip" />
-                          <geom name="collision_hand_right_pinky_0" type="sphere" size="0.01"
-                            rgba="0 1 0 1" group="3" pos="0.01 0 0.00" />
-                          <site name="right_pinky_tip" pos="0.01 0 0.00" />
-                          <site name="trace_hand_right_pinky_tip" pos="0.01 0 0.00" />
-                          <site name="track_hand_right_pinky_tip" pos="0.01 0 0.00" />
+                          <geom name="collision_hand_right_pinky_0" type="capsule" size="0.008"
+                            rgba="0 1 0 1" group="3" fromto="0 0 0 0.015 0 0.00" />
+                          <site name="right_pinky_tip" pos="0.01 0.007 0.00" />
+                          <site name="trace_hand_right_pinky_tip" pos="0.01 0.007 0.00" />
+                          <site name="track_hand_right_pinky_tip" pos="0.01 0.007 0.00" />
                         </body>
                       </body>
                     </body>
@@ -212,11 +212,11 @@
                           diaginertia="2e-05 2e-05 1e-05" />
                         <joint name="right_hand_j14" pos="0 0 0" axis="0 0 1" range="0 1.394" />
                         <geom type="mesh" mesh="right_finger_tip" />
-                        <geom name="collision_hand_right_index_0" type="sphere" size="0.01"
-                          rgba="0 1 0 1" group="3" pos="0.01 0 0.00" />
-                        <site name="right_index_tip" pos="0.01 0 0.00" />
-                        <site name="trace_hand_right_index_tip" pos="0.01 0 0.00" />
-                        <site name="track_hand_right_index_tip" pos="0.01 0 0.00" />
+                        <geom name="collision_hand_right_index_0" type="capsule" size="0.008"
+                          rgba="0 1 0 1" group="3" fromto="0 0 0 0.015 0 0.00" />
+                        <site name="right_index_tip" pos="0.01 0.007 0.00" />
+                        <site name="trace_hand_right_index_tip" pos="0.01 0.007 0.00" />
+                        <site name="track_hand_right_index_tip" pos="0.01 0.007 0.00" />
                       </body>
                     </body>
                   </body>
@@ -243,11 +243,11 @@
                         diaginertia="2e-05 2e-05 1e-05" />
                       <joint name="right_hand_j15" pos="0 0 0" axis="0 0 1" range="0 1.334" />
                       <geom type="mesh" mesh="right_finger_tip" />
-                      <geom name="collision_hand_right_middle_0" type="sphere" size="0.01"
-                        rgba="0 1 0 1" group="3" pos="0.01 0 0.00" />
-                      <site name="right_middle_tip" pos="0.01 0 0.00" />
-                      <site name="trace_hand_right_middle_tip" pos="0.01 0 0.00" />
-                      <site name="track_hand_right_middle_tip" pos="0.01 0 0.00" />
+                      <geom name="collision_hand_right_middle_0" type="capsule" size="0.008"
+                        rgba="0 1 0 1" group="3" fromto="0 0 0 0.015 0 0.00" />
+                      <site name="right_middle_tip" pos="0.01 0.007 0.00" />
+                      <site name="trace_hand_right_middle_tip" pos="0.01 0.007 0.00" />
+                      <site name="track_hand_right_middle_tip" pos="0.01 0.007 0.00" />
                     </body>
                   </body>
                 </body>
@@ -273,17 +273,6 @@
     <position name="right_thumb_flexion_position" joint="right_hand_Thumb_Flexion" />
     <position name="right_thumb_intermediate_position" joint="right_hand_j3" />
     <position name="right_thumb_distal_position" joint="right_hand_j4" />
-
-    <!-- Index joints -->
-    <position name="right_index_proximal_position" joint="right_hand_Index_Finger_Proximal" />
-    <position name="right_index_intermediate_position" joint="right_hand_Index_Finger_Distal" />
-    <position name="right_index_distal_position" joint="right_hand_j14" />
-    <position name="right_index_spread_position" joint="right_hand_index_spread" />
-
-    <!-- Middle joints -->
-    <position name="right_middle_proximal_position" joint="right_hand_Middle_Finger_Proximal" />
-    <position name="right_middle_intermediate_position" joint="right_hand_Middle_Finger_Distal" />
-    <position name="right_middle_distal_position" joint="right_hand_j15" />
     <position name="right_block_position" joint="right_hand_block_joint" />
 
     <!-- Ring joints -->
@@ -297,5 +286,16 @@
     <position name="right_pinky_proximal_position" joint="right_hand_Pinky" />
     <position name="right_pinky_intermediate_position" joint="right_hand_j13" />
     <position name="right_pinky_distal_position" joint="right_hand_j17" />
+
+    <!-- Index joints -->
+    <position name="right_index_spread_position" joint="right_hand_index_spread" />
+    <position name="right_index_proximal_position" joint="right_hand_Index_Finger_Proximal" />
+    <position name="right_index_intermediate_position" joint="right_hand_Index_Finger_Distal" />
+    <position name="right_index_distal_position" joint="right_hand_j14" />
+
+    <!-- Middle joints -->
+    <position name="right_middle_proximal_position" joint="right_hand_Middle_Finger_Proximal" />
+    <position name="right_middle_intermediate_position" joint="right_hand_Middle_Finger_Distal" />
+    <position name="right_middle_distal_position" joint="right_hand_j15" />
   </actuator>
 </mujoco>

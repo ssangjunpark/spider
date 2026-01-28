@@ -101,6 +101,7 @@ def main(
     embodiment_type: str = "bimanual",
     task: str = "pick_spoon_bowl",
     data_id: int = 0,
+    add_floor: bool = False,
 ) -> None:
     dataset_path = Path(dataset_dir)
 
@@ -163,7 +164,8 @@ def main(
             logger.warning("No convex parts generated for {}; skipping export.", hand)
             continue
 
-        hulls = flatten_base(hulls)
+        if add_floor:
+            hulls = flatten_base(hulls)
         output_dir.mkdir(parents=True, exist_ok=True)
 
         for idx, (vertices, faces) in enumerate(hulls):

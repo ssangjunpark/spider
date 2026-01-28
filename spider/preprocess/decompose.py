@@ -73,7 +73,7 @@ def main(
         result = coacd.run_coacd(
             mesh,
             threshold=0.07,
-            max_convex_hull=8,
+            max_convex_hull=16,
             preprocess_mode="auto",
             preprocess_resolution=50,
             resolution=2000,
@@ -100,7 +100,8 @@ def main(
 
         # persist decomposed path back to task_info for future reference
         key = "right_object_convex_dir" if hand == "right" else "left_object_convex_dir"
-        task_info[key] = output_dir
+        relative_path = os.path.relpath(output_dir, dataset_dir)
+        task_info[key] = str(relative_path)
 
     # save updated task_info
     with open(task_info_path, "w") as f:

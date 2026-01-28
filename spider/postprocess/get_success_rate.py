@@ -162,6 +162,7 @@ def main(
     data_type: str = "ikrollout",
     pos_err_threshold: float = 0.1,
     quat_err_threshold: float = 0.5,
+    data_id_list: list[int] = None,
 ):
     # resolve paths using the new structure
     dataset_dir = os.path.abspath(dataset_dir)
@@ -188,11 +189,14 @@ def main(
         ref_dt, sim_dt = _load_task_dts(task_processed_dir, task_name)
 
         # Get all data_id directories within the task
-        data_id_dirs = [
-            d
-            for d in os.listdir(task_processed_dir)
-            if os.path.isdir(os.path.join(task_processed_dir, d)) and d.isdigit()
-        ]
+        if data_id_list is None:
+            data_id_dirs = [
+                d
+                for d in os.listdir(task_processed_dir)
+                if os.path.isdir(os.path.join(task_processed_dir, d)) and d.isdigit()
+            ]
+        else:
+            data_id_dirs = [str(data_id) for data_id in data_id_list]
 
         for data_id_str in data_id_dirs:
             data_id = int(data_id_str)
@@ -261,34 +265,54 @@ def main(
 
                 # get pos and quat
                 pos_object_right_traj = qpos_object_right_traj[:, :3]
+                pos_object_right_traj = (
+                    pos_object_right_traj
+                    - pos_object_right_traj.mean(axis=0, keepdims=True)
+                )
                 quat_wxyz_object_right_traj = qpos_object_right_traj[:, 3:]
                 pos_object_left_traj = qpos_object_left_traj[:, :3]
+                pos_object_left_traj = pos_object_left_traj - pos_object_left_traj.mean(
+                    axis=0, keepdims=True
+                )
                 quat_wxyz_object_left_traj = qpos_object_left_traj[:, 3:]
 
                 pos_object_right_kinematic = qpos_object_right_kinematic[:, :3]
+                pos_object_right_kinematic = (
+                    pos_object_right_kinematic
+                    - pos_object_right_kinematic.mean(axis=0, keepdims=True)
+                )
                 quat_wxyz_object_right_kinematic = qpos_object_right_kinematic[:, 3:]
                 pos_object_left_kinematic = qpos_object_left_kinematic[:, :3]
+                pos_object_left_kinematic = (
+                    pos_object_left_kinematic
+                    - pos_object_left_kinematic.mean(axis=0, keepdims=True)
+                )
                 quat_wxyz_object_left_kinematic = qpos_object_left_kinematic[:, 3:]
 
                 # compute pos error
                 pos_err_right = np.linalg.norm(
                     pos_object_right_traj - pos_object_right_kinematic, axis=1
-                ).mean()
+                )
                 pos_err_left = np.linalg.norm(
                     pos_object_left_traj - pos_object_left_kinematic, axis=1
-                ).mean()
+                )
                 quat_err_right = np.linalg.norm(
                     quat_sub(
                         quat_wxyz_object_right_traj, quat_wxyz_object_right_kinematic
                     ),
                     axis=1,
-                ).mean()
+                )
                 quat_err_left = np.linalg.norm(
                     quat_sub(
                         quat_wxyz_object_left_traj, quat_wxyz_object_left_kinematic
                     ),
                     axis=1,
-                ).mean()
+                )
+
+                quat_err_right = quat_err_right.mean()
+                quat_err_left = quat_err_left.mean()
+                pos_err_right = pos_err_right.mean()
+                pos_err_left = pos_err_left.mean()
 
                 # compute average pos and quat error (handle the case where the object is a place holder)
                 # if pos_object_right_kinematic close to 0, then only use left
@@ -332,10 +356,12 @@ def main(
                 # compute pos and quat error
                 obj_pos_err = np.linalg.norm(
                     pos_object_traj - pos_object_kinematic, axis=1
-                ).mean()
+                )
                 obj_quat_err = np.linalg.norm(
                     quat_sub(quat_wxyz_object_traj, quat_wxyz_object_kinematic), axis=1
-                ).mean()
+                )
+                obj_pos_err = obj_pos_err.mean()
+                obj_quat_err = obj_quat_err.mean()
 
                 pos_err_right = obj_pos_err if embodiment_type == "right" else 0.0
                 pos_err_left = obj_pos_err if embodiment_type == "left" else 0.0
@@ -343,8 +369,8 @@ def main(
                 quat_err_left = obj_quat_err if embodiment_type == "left" else 0.0
 
             # compute success
-            success = (obj_pos_err < pos_err_threshold) & (
-                obj_quat_err < quat_err_threshold
+            success = (obj_pos_err <= pos_err_threshold) & (
+                obj_quat_err <= quat_err_threshold
             )
 
             # Create dataframe entry

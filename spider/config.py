@@ -12,6 +12,7 @@ Date: 2025-08-10
 
 import json
 import os
+import random
 from dataclasses import dataclass, field
 
 import loguru
@@ -29,6 +30,7 @@ class Config:
     robot_type: str = "xhand"  # "inspire", "allegro", "g1"
     embodiment_type: str = "bimanual"  # "left", "right", "bimanual", "CMU"
     task: str = "pick_spoon_bowl"
+    seed: int = 0
 
     # === DATASET CONFIGURATION ===
     dataset_dir: str = f"{spider.ROOT}/../example_datasets"
@@ -107,6 +109,7 @@ class Config:
     save_info: bool = True
     save_rerun: bool = False
     save_metrics: bool = True
+    save_config: bool = True
 
     # === TRACE RECORDING ===
     trace_dt: float = 1 / 50.0
@@ -273,5 +276,12 @@ def process_config(config: Config):
             raise ValueError(
                 "contact_site_ids not found in task_info.json while contact_rew_scale > 0.0"
             )
+
+    # set seed
+    np.random.seed(config.seed)
+    torch.manual_seed(config.seed)
+    torch.cuda.manual_seed(config.seed)
+    torch.cuda.manual_seed_all(config.seed)
+    random.seed(config.seed)
 
     return config

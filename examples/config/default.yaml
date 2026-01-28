@@ -6,6 +6,7 @@ defaults:
 robot_type: xhand # "inspire", "allegro", "g1"
 embodiment_type: bimanual # "left", "right", "bimanual", "CMU"
 task: pick_spoon_bowl
+seed: 0
 
 # === DATASET CONFIGURATION ===
 dataset_dir: example_datasets
@@ -26,8 +27,8 @@ horizon: 1.6 # planning horizon
 knot_dt: 0.4 # knot point spacing
 max_sim_steps: -1 # maximum simulation steps (-1 for unlimited)
 # Simulation constraints
-nconmax_per_env: 80 # max contacts per environment
-njmax_per_env: 300 # max joints per environment
+nconmax_per_env: 100 # max contacts per environment
+njmax_per_env: 350 # max joints per environment
 # Simulation annealing
 num_dyn: 1 # number of environments for annealing, used for virtual contact constraint
 # Domain randomization
@@ -75,6 +76,7 @@ save_video: true
 save_rerun: false
 save_metrics: true
 save_info: true
+save_config: true
 
 # === TRACE RECORDING ===
 trace_dt: 0.02 # 1/50.0

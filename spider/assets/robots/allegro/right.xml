@@ -8,7 +8,7 @@
 
     <default>
         <default class="mimic_right">
-            <site size="0.015" type="sphere" rgba="1 0 0 1" group="3" />
+            <site size="0.005" type="sphere" rgba="1 0 0 1" group="3" />
         </default>
         <default class="allegro_right">
             <joint axis="0 1 0" armature="1.0" damping="0.0" />
@@ -201,10 +201,10 @@
                             <joint name="right_index_distal_joint" class="right_distal" />
                             <geom class="right_distal_visual" />
                             <body name="right_ff_tip">
-                                <site name="right_index_tip" pos="0 0 0.019" class="mimic_right" />
-                                <site name="track_hand_right_index_tip" pos="0 0 0.019"
+                                <site name="right_index_tip" pos="0.01 0.0 0.029" class="mimic_right" />
+                                <site name="track_hand_right_index_tip" pos="0.01 0.0 0.029"
                                     class="mimic_right" />
-                                <site name="trace_right_index_tip" pos="0 0 0.019"
+                                <site name="trace_right_index_tip" pos="0.01 0.0 0.029"
                                     class="mimic_right" />
                                 <geom class="right_fingertip_visual" />
                                 <geom name="collision_hand_right_index_0"
@@ -231,10 +231,10 @@
                             <joint name="right_middle_distal_joint" class="right_distal" />
                             <geom class="right_distal_visual" />
                             <body name="right_mf_tip">
-                                <site name="right_middle_tip" pos="0 0 0.019" class="mimic_right" />
-                                <site name="track_hand_right_middle_tip" pos="0 0 0.019"
+                                <site name="right_middle_tip" pos="0.01 0.0 0.029" class="mimic_right" />
+                                <site name="track_hand_right_middle_tip" pos="0.01 0.0 0.029"
                                     class="mimic_right" />
-                                <site name="trace_right_middle_tip" pos="0 0 0.019"
+                                <site name="trace_right_middle_tip" pos="0.01 0.0 0.029"
                                     class="mimic_right" />
                                 <geom class="right_fingertip_visual" />
                                 <geom name="collision_hand_right_middle_0"
@@ -261,10 +261,10 @@
                             <joint name="right_ring_distal_joint" class="right_distal" />
                             <geom class="right_distal_visual" />
                             <body name="right_rf_tip">
-                                <site name="right_ring_tip" pos="0 0 0.019" class="mimic_right" />
-                                <site name="track_hand_right_ring_tip" pos="0 0 0.019"
+                                <site name="right_ring_tip" pos="0.01 0.0 0.029" class="mimic_right" />
+                                <site name="track_hand_right_ring_tip" pos="0.01 0.0 0.029"
                                     class="mimic_right" />
-                                <site name="trace_right_ring_tip" pos="0 0 0.019"
+                                <site name="trace_right_ring_tip" pos="0.01 0.0 0.029"
                                     class="mimic_right" />
                                 <geom class="right_fingertip_visual" />
                                 <geom name="collision_hand_right_ring_0"
@@ -293,10 +293,10 @@
                             <geom name="collision_hand_right_thumb_1"
                                 class="right_thumb_distal_collision" />
                             <body name="right_th_tip">
-                                <site name="right_thumb_tip" pos="0 0 0.035" class="mimic_right" />
-                                <site name="track_hand_right_thumb_tip" pos="0 0 0.035"
+                                <site name="right_thumb_tip" pos="0.01 0.0 0.039" class="mimic_right" />
+                                <site name="track_hand_right_thumb_tip" pos="0.01 0.0 0.039"
                                     class="mimic_right" />
-                                <site name="trace_right_thumb_tip" pos="0 0 0.035"
+                                <site name="trace_right_thumb_tip" pos="0.01 0.0 0.039"
                                     class="mimic_right" />
                                 <geom class="right_thumbtip_visual" />
                                 <geom name="collision_hand_right_thumb_0"

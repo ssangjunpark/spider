@@ -215,3 +215,7 @@ docs/.vitepress/cache/
 # private-robots
 spider/assets/robots/xhand_pro/
 spider/assets/robots/sharpa/
+
+# mujoco logs
+MJMODEL.TXT
+MJDATA.TXT
