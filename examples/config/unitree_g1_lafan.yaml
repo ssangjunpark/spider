@@ -1,0 +1,29 @@
+# @package _global_
+defaults:
+  - default
+
+# Dataset and Robot Configuration for Unitree G1 on LaFAN dataset
+robot_type: unitree_g1
+embodiment_type: humanoid
+dataset_name: lafan
+task: dance
+data_id: 0
+
+# Simulation and Control Parameters (tuned for humanoid animation)
+sim_dt: 0.0166667   # 60 Hz simulation
+ref_dt: 0.0333333   # 30 Hz reference (LaFAN data)
+ctrl_dt: 0.1        # 10 Hz control
+horizon: 0.8        # Planning horizon
+knot_dt: 0.1        # Knot point spacing
+trace_dt: 0.0333333 # Trace recording rate
+
+# Optimization parameters
+num_samples: 1024
+max_num_iterations: 32
+first_ctrl_noise_scale: 0.5
+last_ctrl_noise_scale: 1.0
+final_noise_scale: 0.1
+joint_noise_scale: 0.1
+
+use_torch_compile: true
+save_video: true

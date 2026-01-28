@@ -59,7 +59,7 @@ def load_data(
         )
         if config.embodiment_type in ["bimanual", "right", "left"]:
             ctrl_ref = qpos_ref[:, : -config.nq_obj]
-        elif config.embodiment_type in ["CMU", "DanceDB"]:
+        elif config.embodiment_type in ["CMU", "DanceDB", "humanoid", "humanoid_object"]:
             ctrl_ref = qpos_ref[:, 7:]
         else:
             raise ValueError(f"Invalid embodiment_type: {config.embodiment_type}")

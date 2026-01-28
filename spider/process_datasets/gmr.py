@@ -44,41 +44,23 @@ from spider.math import quat_sub
 from spider.mujoco_utils import get_viewer
 
 
-def main(
-    dataset_dir: str = f"{ROOT}/../example_datasets",
-    dataset_name: str = "amass",
-    robot_type: str = "unitree_g1",
-    embodiment_type: str = "humanoid",
-    task: str = "sprint",
-    data_id: int = 0,
-    show_viewer: bool = True,
-    save_video: bool = True,
-    overwrite: bool = True,
-    enable_rate_limiter: bool = False,
-    start_frame: int = 0,
-    end_frame: int = -1,
-    contact_detection_mode: str = "one",
+def process_single_clip(
+    dataset_dir: str,
+    dataset_name: str,
+    robot_type: str,
+    embodiment_type: str,
+    task: str,
+    data_id: int,
+    show_viewer: bool,
+    save_video: bool,
+    overwrite: bool,
+    enable_rate_limiter: bool,
+    start_frame: int,
+    end_frame: int,
+    contact_detection_mode: str,
+    source_pkl_path: str = None,
 ):
-    """Process GMR data to create a SPIDER dataset.
-
-    Args:
-        dataset_dir: The directory containing the GMR data.
-        dataset_name: The name of the dataset.
-        robot_type: The type of robot.
-        embodiment_type: The type of embodiment.
-        task: The task to perform.
-        data_id: The id of the data.
-        show_viewer: Whether to show the viewer.
-        save_video: Whether to save the video.
-        overwrite: Whether to overwrite the existing data.
-        enable_rate_limiter: Whether to enable the rate limiter.
-        start_frame: The start frame of the data.
-        end_frame: The end frame of the data.
-        contact_detection_mode: The mode of contact detection.
-            "auto": Automatically detect contact based on mujoco contact detection.
-            "zero": Always disable contact.
-            "one": Always enable contact.
-    """
+    """Process a single GMR data clip."""
     dataset_dir = os.path.abspath(dataset_dir)
     processed_dir = get_processed_data_dir(
         dataset_dir=dataset_dir,
@@ -88,9 +70,16 @@ def main(
         task=task,
         data_id=data_id,
     )
+    # Ensure processed directory exists
+    os.makedirs(processed_dir, exist_ok=True)
+
     print(f"Processed directory: {processed_dir}")
     # load gmr pkl data
     gmr_pkl_path = f"{processed_dir}/trajectory_gmr.pkl"
+    if source_pkl_path:
+        print(f"Copying {source_pkl_path} to {gmr_pkl_path}")
+        shutil.copy(source_pkl_path, gmr_pkl_path)
+
     if not os.path.exists(gmr_pkl_path):
         raise FileNotFoundError(f"GMR pkl file not found at {gmr_pkl_path}")
     with open(gmr_pkl_path, "rb") as f:
@@ -254,6 +243,98 @@ def main(
     if save_video:
         imageio.mimsave(f"{processed_dir}/visualization_ik.mp4", images, fps=fps)
         print(f"Saved video to {processed_dir}/visualization_ik.mp4")
+
+
+def main(
+    dataset_dir: str = f"{ROOT}/../example_datasets",
+    dataset_name: str = "amass",
+    robot_type: str = "unitree_g1",
+    embodiment_type: str = "humanoid",
+    task: str = "sprint",
+    data_id: int = 0,
+    show_viewer: bool = True,
+    save_video: bool = True,
+    overwrite: bool = True,
+    enable_rate_limiter: bool = False,
+    start_frame: int = 0,
+    end_frame: int = -1,
+    contact_detection_mode: str = "one",
+    input_dir: str = "",
+):
+    """Process GMR data to create a SPIDER dataset.
+
+    Args:
+        dataset_dir: The directory containing the GMR data.
+        dataset_name: The name of the dataset.
+        robot_type: The type of robot.
+        embodiment_type: The type of embodiment.
+        task: The task to perform.
+        data_id: The id of the data.
+        show_viewer: Whether to show the viewer.
+        save_video: Whether to save the video.
+        overwrite: Whether to overwrite the existing data.
+        enable_rate_limiter: Whether to enable the rate limiter.
+        start_frame: The start frame of the data.
+        end_frame: The end frame of the data.
+        contact_detection_mode: The mode of contact detection.
+            "auto": Automatically detect contact based on mujoco contact detection.
+            "zero": Always disable contact.
+            "one": Always enable contact.
+        input_dir: Directory containing .pkl files to batch process. If provided, processes all .pkl files found recursively.
+    """
+    if input_dir and os.path.isdir(input_dir):
+        import glob
+        input_dir = os.path.abspath(input_dir)
+        print(f"Batch processing files from: {input_dir}")
+        pkl_files = glob.glob(os.path.join(input_dir, "**/*.pkl"), recursive=True)
+
+        print(f"Found {len(pkl_files)} pkl files.")
+
+        for i, pkl_file in enumerate(sorted(pkl_files)):
+            # Derive task name from filename
+            filename = os.path.basename(pkl_file)
+            file_stem = os.path.splitext(filename)[0]
+            current_task = file_stem
+
+            print(f"Processing {i+1}/{len(pkl_files)}: {pkl_file} -> Task: {current_task}")
+
+            try:
+                process_single_clip(
+                    dataset_dir=dataset_dir,
+                    dataset_name=dataset_name,
+                    robot_type=robot_type,
+                    embodiment_type=embodiment_type,
+                    task=current_task,
+                    data_id=0,
+                    show_viewer=show_viewer,
+                    save_video=save_video,
+                    overwrite=overwrite,
+                    enable_rate_limiter=enable_rate_limiter,
+                    start_frame=start_frame,
+                    end_frame=end_frame,
+                    contact_detection_mode=contact_detection_mode,
+                    source_pkl_path=pkl_file,
+                )
+            except Exception as e:
+                print(f"Error processing {pkl_file}: {e}")
+                import traceback
+                traceback.print_exc()
+    else:
+        process_single_clip(
+            dataset_dir,
+            dataset_name,
+            robot_type,
+            embodiment_type,
+            task,
+            data_id,
+            show_viewer,
+            save_video,
+            overwrite,
+            enable_rate_limiter,
+            start_frame,
+            end_frame,
+            contact_detection_mode,
+        )
 
 
 if __name__ == "__main__":
