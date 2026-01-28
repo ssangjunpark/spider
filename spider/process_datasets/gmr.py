@@ -28,6 +28,8 @@ Output:
 
 import json
 import os
+if "MUJOCO_GL" not in os.environ:
+    os.environ["MUJOCO_GL"] = "egl"
 import pickle
 import shutil
 
@@ -137,11 +139,18 @@ def process_single_clip(
     # log info
     info_list = []
     # log video
+    renderer = None
     if save_video:
-        images = []
-        mj_model.vis.global_.offwidth = 720
-        mj_model.vis.global_.offheight = 480
-        renderer = mujoco.Renderer(mj_model, height=480, width=720)
+        try:
+            images = []
+            mj_model.vis.global_.offwidth = 720
+            mj_model.vis.global_.offheight = 480
+            renderer = mujoco.Renderer(mj_model, height=480, width=720)
+        except Exception as e:
+            print(f"Warning: Failed to create mujoco Renderer: {e}")
+            print("Video saving will be disabled for this clip.")
+            save_video = False
+            renderer = None
     with run_viewer() as gui:
         for i in range(qpos.shape[0]):
             mj_data.qpos[:] = qpos[i]
