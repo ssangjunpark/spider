@@ -18,6 +18,10 @@ import time
 from dataclasses import fields
 from pathlib import Path
 
+import os
+if "MUJOCO_GL" not in os.environ:
+    os.environ["MUJOCO_GL"] = "egl"
+
 import hydra
 import imageio
 import loguru
@@ -290,6 +294,7 @@ def main(config: Config):
 
     return
 
+from datetime import datetime
 
 @hydra.main(version_base=None, config_path="config", config_name="default")
 def run_main(cfg: DictConfig) -> None:
@@ -307,8 +312,9 @@ def run_main(cfg: DictConfig) -> None:
         config_dict["xy_offset_range"] = tuple(config_dict["xy_offset_range"])
 
     config = Config(**config_dict)
+    t0 = datetime.now()
     main(config)
-
+    print(f"Time taken to do physics - {datetime.now() - t0}")
 
 if __name__ == "__main__":
     run_main()
