@@ -30,7 +30,8 @@ for TASK_DIR in "$BASE_DIR"/*; do
     # Using 'conda run' (assuming 'spider' environment)
     # Added viewer=none to disable popup window
     # Added save_video=true to ensure video rendering is kept
-    conda run -n spider python examples/run_mjwp.py \
+    # Added --no-capture-output to allow printing to stdout
+    conda run --no-capture-output -n spider python -u examples/run_mjwp.py \
       +override=humanoid \
       dataset_name="${DATASET_NAME}" \
       task="${TASK}" \
